@@ -2,6 +2,11 @@ import express from "express";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import User from "./models/user.model.js";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+import authenticateToken from "./auth.js";
+
+dotenv.config();
 
 const app = express();
 app.use(express.json());
@@ -32,7 +37,9 @@ app.post('/user', async (req, res) => {
         });
 
     } catch(err) {
-        if (err.hasOwnProperty("code") && err.code == 11000) res.status(400).json("Username already exists");
+        if (err.hasOwnProperty("code") && err.code == 11000) {
+            res.status(400).json("Username already exists");
+        }
         else res.status(500).json(err);
     }
 })
@@ -48,10 +55,18 @@ app.post('/login', async (req, res) => {
         const match = await bcrypt.compare(password, user.password);
         if (!match) return res.status(400).json("invalid username or password");
 
-        res.status(200).json("authenticated!");
+        // create jwt token
+        
+        const accessToken = jwt.sign({ username: username }, process.env.ACCESS_TOKEN_SECRET);
+        res.json({ access_token: accessToken });
+
     } catch (err) {
         res.status(500).json(err);
     }
+})
+
+app.get('/echo', authenticateToken, (req, res) => {
+    res.status(200).json({ message: `Hello, ${req.user.username}`});
 })
 
 app.listen(3000);

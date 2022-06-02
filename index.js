@@ -2,11 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import User from "./models/user.model.js";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import authenticateToken from "./auth.js";
-
-dotenv.config();
+import { authenticateToken, generateAccessToken, generateRefreshToken } from "./auth.js";
 
 const app = express();
 app.use(express.json());
@@ -55,9 +51,10 @@ app.post('/login', async (req, res) => {
         const match = await bcrypt.compare(password, user.password);
         if (!match) return res.status(400).json("invalid username or password");
         
-        const accessToken = jwt.sign({ username: username }, process.env.ACCESS_TOKEN_SECRET);
-        res.json({ access_token: accessToken });
+        const accessToken = generateAccessToken({ username: username });
+        const refreshToken = generateRefreshToken({ username: username });
 
+        res.json({ access_token: accessToken, refreshToken: refreshToken });
     } catch (err) {
         res.status(500).json(err);
     }

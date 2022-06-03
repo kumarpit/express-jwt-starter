@@ -44,7 +44,7 @@ app.post('/user', async (req, res) => {
 
 app.post('/login', async (req, res) => {
     try {
-        if (!(req.body.username && req.body.password)) res.status(400).json("Invalid request body");
+        if (!(req.body.username && req.body.password)) return res.status(400).json("Invalid request body");
         const { username, password } = req.body;
         const user = await User.findOne({ username: username });
         

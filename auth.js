@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export const authenticateToken = (req, res, next) => {
+export const authenticateAccessToken = (req, res, next) => {
     const authorization = req.headers['authorization'];
     const token = authorization && authorization.split(" ")[1];
     if (token == null) return res.sendStatus(401);
@@ -14,6 +14,17 @@ export const authenticateToken = (req, res, next) => {
         req.user = user;
         next();
     })
+}
+
+export const authenticateRefreshToken = (req, res, next) => {
+    const refreshToken = req.body.refresh_token;
+    if (refreshToken == null) res.sendStatus(400);
+
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next();
+    }) 
 }
 
 export const generateAccessToken = (user) => {

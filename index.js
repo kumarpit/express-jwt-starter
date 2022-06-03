@@ -2,12 +2,12 @@ import express from "express";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import User from "./models/user.model.js";
-import { authenticateToken, generateAccessToken, generateRefreshToken } from "./auth.js";
+import { authenticateAccessToken, authenticateRefreshToken, generateAccessToken, generateRefreshToken } from "./auth.js";
 
 const app = express();
 app.use(express.json());
 
-mongoose.connect('mongodb://127.0.0.1:27017/express-auth', {
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
@@ -54,13 +54,26 @@ app.post('/login', async (req, res) => {
         const accessToken = generateAccessToken({ username: username });
         const refreshToken = generateRefreshToken({ username: username });
 
+        await User.findOneAndUpdate({ username: username }, { refresh_token: refreshToken });
+
         res.json({ access_token: accessToken, refreshToken: refreshToken });
     } catch (err) {
         res.status(500).json(err);
     }
 })
 
-app.get('/echo', authenticateToken, (req, res) => {
+app.post('/token', authenticateRefreshToken, async (req, res) => {
+    try {
+        const user = await User.findOne({ username: req.user.username })
+        console.log(user.refresh_token);
+        if (user.refresh_token != req.body.refresh_token) res.sendStatus(401);
+        else res.status(200).json({ new_access_token: generateAccessToken(req.user) })
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
+
+app.get('/echo', authenticateAccessToken, (req, res) => {
     res.status(200).json({ message: `Hello, ${req.user.username}`});
 })
 

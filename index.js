@@ -62,10 +62,18 @@ app.post('/login', async (req, res) => {
     }
 })
 
+app.post('/logout', authenticateRefreshToken, async (req, res) => {
+    try {
+        await User.findOneAndUpdate({ username: req.user.username }, { refresh_token: '' });
+        res.status(200).json("Logged out")
+    } catch (err) {
+        res.status(500).json(err);
+    }
+})
+
 app.post('/token', authenticateRefreshToken, async (req, res) => {
     try {
         const user = await User.findOne({ username: req.user.username })
-        console.log(user.refresh_token);
         if (user.refresh_token != req.body.refresh_token) res.sendStatus(401);
         else res.status(200).json({ new_access_token: generateAccessToken(req.user) })
     } catch (err) {

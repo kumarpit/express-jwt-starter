@@ -58,7 +58,7 @@ app.post('/login', async (req, res) => {
 
         await User.findOneAndUpdate({ username: username }, { refresh_token: refreshToken });
 
-        res.json({ access_token: accessToken, refreshToken: refreshToken });
+        res.json({ access_token: accessToken, refresh_token: refreshToken });
     } catch (err) {
         res.status(500).json(err);
     }

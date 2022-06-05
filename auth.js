@@ -27,7 +27,7 @@ export const authenticateRefreshToken = (req, res, next) => {
 }
 
 export const generateAccessToken = (user) => {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '20s' });
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15s' });
 }
 
 export const generateRefreshToken = (user) => {

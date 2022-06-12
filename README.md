@@ -26,90 +26,15 @@ The following routes have been implemented:
 
 ### `/user`
 The `/user` endpoint saves a the new user's username and hashed password to the `Users` collection in the database. The `username` field is validated to be unique.
-```javascript
-POST localhost:3000/user
-```
-#### Headers
-```javascript
-Content-Type: application/json
-```
-#### Request Body
-```javascript
-{
-  username: string,
-  password: string
-}
-```
 
 ### `/login`
 The `/login` endpoint returns access and refresh tokens if the user signs in with valid credentials. The access token is set to be valid for 15 minutes, after which it is the client's responsiblity to generate new tokens by requesting the `/token` endpoint (see below).
-```javascript
-POST localhost:3000/login
-```
-#### Headers
-```javascript
-Content-Type: application/json
-```
-#### Request Body
-```javascript
-{
-  username: string,
-  password: string
-}
-```
-#### Response
-```javascript
-{
-  access_token: string,
-  refresh_token: string
-}
-```
 
 ### `/token`
 The `/token` endpoint returns a new access token given a valid refresh token.
-```javascript
-POST localhost:3000/token
-```
-#### Headers
-```javascript
-Content-Type: application/json
-```
-#### Request Body
-```javascript
-{
-  refresh_token: string
-}
-```
-#### Response
-```javascript
-{
-  new_access_token: string
-}
-```
 
 ### `/logout`
 The `/logout` endpoint invalidates the user's refresh token. However, the access token remains valid if it hasn't timed out, hence it is the client's responsibility to discard the access token.
-```javascript
-POST localhost:3000/logout
-```
-#### Headers
-```javascript
-Content-Type: application/json
-```
-#### Request Body
-```javascript
-{
-  refresh_token: string
-}
-```
 
 ### `/echo`
 The `/echo` endpoint reads the username from the access token and returns a `hello, {username}` message. This endpoint serves as an example of routes that validate the access token.
-```javascript
-GET localhost:3000/echo
-```
-#### Headers
-```javascript
-Content-Type: application/json
-Authorization: {access token}
-```

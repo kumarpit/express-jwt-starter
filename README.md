@@ -1,5 +1,5 @@
 # Express JWT Template
-A boilerplate for an express app that require JWT authentication via a MongoDB database.
+A boilerplate for an express app that requires JWT authentication via a MongoDB database.
 
 ### Installation
 Install the required dependencies using `npm install` and start the server using `npm start`. You will need to create a `.env` file in the root directory and define the following environment variables:

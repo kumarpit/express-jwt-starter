@@ -33,7 +33,7 @@ POST localhost:3000/user
 ```javascript
 Content-Type: application/json
 ```
-#### Body
+#### Request Body
 ```javascript
 {
   username: string,
@@ -50,7 +50,7 @@ POST localhost:3000/login
 ```javascript
 Content-Type: application/json
 ```
-#### Body
+#### Request Body
 ```javascript
 {
   username: string,
